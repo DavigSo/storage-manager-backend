@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/db.js";
-import itemRoutes from "./routes/items.js";
 import dotenv from "dotenv";
+import { connectDB } from "./config/db.js";
+import itemsRouter from "./routes/items.js";
 
 dotenv.config();
 await connectDB();
@@ -11,7 +11,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/items", itemRoutes);
+// Health‐check rápido:
+app.get("/health", (_req, res) => {
+  console.log("💓 /health OK");
+  res.json({ status: "up" });
+});
+
+// Monta o roteador
+app.use("/api/items", itemsRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
